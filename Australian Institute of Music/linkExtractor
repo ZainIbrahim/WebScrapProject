@@ -1,0 +1,43 @@
+from requests import get
+from bs4 import BeautifulSoup
+import time
+
+'''Collect links'''
+
+links = []
+links2 = []
+links3 = []
+#get the first set of links
+url = 'https://www.aim.edu.au/programs'
+request = get(url, headers={'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.88 Safari/537.36'})
+soup = BeautifulSoup(request.text, 'html.parser')
+print(soup.prettify())
+
+h2_tag = soup.find_all('h2')
+for h2 in h2_tag:
+    if "DISCOVER OUR RANGE OF EXCITING" in h2.text:
+        div = h2.find_next(class_='col-md-6')
+        for h5 in div.find_all('h5'):
+            link = h5.a.get('href')
+            if link.startswith('/programs/'):
+                linkk = 'https://www.aim.edu.au' +link
+            else:
+                linkk = link
+            print(linkk)
+            links.append(linkk)
+
+h2_tag = soup.find_all('h2')
+for h2 in h2_tag:
+    if "DISCOVER OUR RANGE OF EXCITING" in h2.text:
+        div = h2.find_all_next(class_='col-md-6')[1]
+        a_tag = div.find_all('a')
+        for a in a_tag:
+            lin = a.get('href')
+            print(lin)
+            links.append(lin)
+
+
+#write to file
+with open('links.txt', 'w') as output:
+    for row in links:
+        output.write(str(row)+'\n')

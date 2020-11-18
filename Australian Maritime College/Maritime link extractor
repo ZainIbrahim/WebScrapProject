@@ -1,0 +1,79 @@
+from requests import get
+from bs4 import BeautifulSoup
+import time
+
+'''Collect links'''
+
+links = []
+links2 = []
+links3 = []
+links4 =[]
+all_links =[]
+
+#get the undergraduate links
+url = 'https://www.amc.edu.au/study/undergraduate'
+request = get(url, headers={'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.88 Safari/537.36'})
+soup = BeautifulSoup(request.text, 'html.parser')
+#print(soup.prettify())
+
+h3_tag = soup.find_all('h3')
+for h3 in h3_tag:
+    if "AMC offers courses in the following study areas" in h3.text:
+        div_tag = h3.find_next('div', class_='row')
+        a_tag = div_tag.find_all('a')
+        for a in a_tag:
+            link1 = a.get('href')
+            links.append(link1)
+        div_tag_ = h3.find_all_next(class_='row')[1]
+        a_tag_ = div_tag_.find('a').get('href')
+        links.append(a_tag_)
+
+for x in range(len(links)):
+    url2 = links[x]
+    request2 = get(url2, headers={'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.88 Safari/537.36'})
+    soup2 = BeautifulSoup(request2.text, 'html.parser')
+    #print(soup2.prettify())
+
+    cont = soup2.find(class_='block block__pad-lg t-default__inverse')
+    a_tag2 = cont.find_all('a')
+    for a in a_tag2:
+        link2 = a.get('href')
+        links2.append(link2)
+
+#get the links of postgraduate
+url3 = 'https://www.amc.edu.au/study/postgraduate'
+request3 = get(url3, headers={'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.88 Safari/537.36'})
+soup3 = BeautifulSoup(request3.text, 'html.parser')
+#print(soup3.prettify())
+
+h3_tag = soup3.find_all('h3')
+for h3 in h3_tag:
+    if "AMC offers postgraduate opportunities in the following areas" in h3.text:
+        div_tag = h3.find_next('div', class_='row')
+        a_tag = div_tag.find_all('a')
+        for a in a_tag:
+            link3 = a.get('href')
+            links3.append(link3)
+
+for y in range(len(links3)):
+    url4 = links3[y]
+    request4 = get(url4, headers={'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.88 Safari/537.36'})
+    soup4 = BeautifulSoup(request4.text, 'html.parser')
+    #print(soup4.prettify())
+
+    panel_group = soup4.find('div', class_='panel-group')
+    section = panel_group.find_all('section')
+    for sec in section:
+        p_tag = sec.find_all('p')
+        for p in p_tag:
+            if "Find out more about the" in p.text:
+                link4 = p.find_next('a').get('href')
+                print(link4)
+                links4.append(link4)
+
+all_links.append('\n'.join(links2))
+all_links.append('\n'.join(links4))
+#write to file
+with open('links.txt', 'w') as output:
+    for row in all_links:
+        output.write(str(row)+'\n')
