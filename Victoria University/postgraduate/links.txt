@@ -57,8 +57,6 @@ https://www.vu.edu.au/courses/international/NGPM
 https://www.vu.edu.au/courses/international/NMPM
 https://www.vu.edu.au/courses/international/HMPG
 https://www.vu.edu.au/courses/international/SRMS
-https://www.vu.edu.au/courses/international/SGSI
-https://www.vu.edu.au/courses/international/SMSI
 https://www.vu.edu.au/courses/international/BMSP
 https://www.vu.edu.au/courses/international/EMPE
 https://www.vu.edu.au/courses/international/EMES
