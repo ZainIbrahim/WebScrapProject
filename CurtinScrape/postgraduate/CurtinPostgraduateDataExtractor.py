@@ -6,6 +6,8 @@ import pandas as pd
 uni_names, country_names, titles, level_codes, descriptions, faculties, int_fees, currencies, cities, local_fees = ([]for i in range(10))
 currency_times, durations, duration_times, full_times, part_times, prere1s, prere2s, prere3s, prere1grades, prere2grades, prere3grades = ([] for i in range(11))
 linksss, course_langs, availabilities, career_outcomes, onlines, offlines, distances, face_to_faces, blendeds, remarks = ([] for i in range(10))
+subject_or_unit_name_1, subject_or_unit_name_2, subject_or_unit_name_3, subject_or_unit_name_4, subject_or_unit_name_5, subject_or_unit_name_6, subject_or_unit_name_7, subject_or_unit_name_8, subject_or_unit_name_9, subject_or_unit_name_10 = ([] for i in range(10))
+subject_or_unit_desc_1, subject_or_unit_desc_2, subject_or_unit_desc_3, subject_or_unit_desc_4, subject_or_unit_desc_5, subject_or_unit_desc_6, subject_or_unit_desc_7, subject_or_unit_desc_8, subject_or_unit_desc_9, subject_or_unit_desc_10 = ([] for i in range(10))
 
 '''Collect data'''
 with open('links.txt') as f:
@@ -195,6 +197,7 @@ with open('links.txt') as f:
         part_times.append(part_time)
 
         # get prerequiste 1
+        '''
         prere1ss = []
         if soup.find('div', class_='table-block'):
             table_block = soup.find('div', class_='table-block')
@@ -221,7 +224,9 @@ with open('links.txt') as f:
         else:
             prere1s.append(" ")
             prere1grades.append(" ")
-
+        '''
+        prere1s.append('')
+        prere1grades.append(" ")
 
         # prerequisite 2
         prere2 = ''
@@ -248,6 +253,7 @@ with open('links.txt') as f:
         availabilities.append(availability)
 
         # get course description
+        '''
         h3_tagg = soup.find_all('h3')#variable for one of the conditions below
         if soup.find(class_='outline__lead hero-intro last-mb0'):
             description = soup.find(class_='outline__lead hero-intro last-mb0').text.strip()
@@ -267,6 +273,8 @@ with open('links.txt') as f:
             descriptions.append(h333)
         else:
             descriptions.append(" ")
+        '''
+        descriptions.append(" ")
 
         # career outcomes
         career_renew = []
@@ -328,6 +336,180 @@ with open('links.txt') as f:
         else:
             remarks.append(' ')
 
+        '''=============================Subject names, descriptions ================================='''
+        # get the first set of links
+        first_set_link = []
+        div_tagz = soup.find(class_='outline__links-wrap')
+        if div_tagz:
+            for li in div_tagz.ul.find_all('li'):
+                # print('this is li: '+str(li))
+                for a in li.find_all('a'):
+                    if 'handbook.curtin.edu.au' in a.get('href'):
+                        # print(a.get('href'))
+                        first_set_link.append(a.get('href'))
+
+        if len(first_set_link) == 0:
+            subject_or_unit_name_1.append('')
+            subject_or_unit_name_2.append('')
+            subject_or_unit_name_3.append('')
+            subject_or_unit_name_4.append('')
+            subject_or_unit_name_5.append('')
+            subject_or_unit_name_6.append('')
+            subject_or_unit_name_7.append('')
+            subject_or_unit_name_8.append('')
+            subject_or_unit_name_9.append('')
+            subject_or_unit_name_10.append('')
+            subject_or_unit_desc_1.append('')
+            subject_or_unit_desc_2.append('')
+            subject_or_unit_desc_3.append('')
+            subject_or_unit_desc_4.append('')
+            subject_or_unit_desc_5.append('')
+            subject_or_unit_desc_6.append('')
+            subject_or_unit_desc_7.append('')
+            subject_or_unit_desc_8.append('')
+            subject_or_unit_desc_9.append('')
+            subject_or_unit_desc_10.append('')
+
+        # get the second set of links
+        second_set_links = []
+        for x in first_set_link:
+            url3 = x
+            request3 = get(url3, headers={'User-Agent': 'Mozilla/5.0'})
+            soup3 = BeautifulSoup(request3.text, 'html.parser')
+
+            table_tagz = soup3.find('table', class_='fullwidth')
+            if table_tagz:
+                for tr in table_tagz.find_all('tr'):
+                    for a in tr.find_all('a'):
+                        if len(second_set_links) == 10:
+                            break
+                        linkz = a.get('href').replace('../../', '')
+                        linkz_ = 'http://handbook.curtin.edu.au/' + linkz
+                        # print(linkz_)
+                        second_set_links.append(linkz_)
+
+        if len(second_set_links) == 0:
+            if len(first_set_link) == 0:
+                pass
+            else:
+                subject_or_unit_name_1.append('')
+                subject_or_unit_name_2.append('')
+                subject_or_unit_name_3.append('')
+                subject_or_unit_name_4.append('')
+                subject_or_unit_name_5.append('')
+                subject_or_unit_name_6.append('')
+                subject_or_unit_name_7.append('')
+                subject_or_unit_name_8.append('')
+                subject_or_unit_name_9.append('')
+                subject_or_unit_name_10.append('')
+                subject_or_unit_desc_1.append('')
+                subject_or_unit_desc_2.append('')
+                subject_or_unit_desc_3.append('')
+                subject_or_unit_desc_4.append('')
+                subject_or_unit_desc_5.append('')
+                subject_or_unit_desc_6.append('')
+                subject_or_unit_desc_7.append('')
+                subject_or_unit_desc_8.append('')
+                subject_or_unit_desc_9.append('')
+                subject_or_unit_desc_10.append('')
+        # get the data
+        subject_names = []
+        subject_descriptions = []
+        subject_objectives = []
+        for h in second_set_links:
+            url4 = h
+            request4 = get(url4, headers={'User-Agent': 'Mozilla/5.0'})
+            soup4 = BeautifulSoup(request4.text, 'html.parser')
+
+            # get the title
+            subject_name_renew = []
+            div_tagz = soup4.find(id='breadcrumbs')
+            title_tagz = div_tagz.find_next('h1').text.strip()
+            print('this is the titles of the course: ' + title_tagz)
+            subject_name_renew.append(title_tagz)
+
+            # get course description
+            subject_description_renew = []
+            for th in soup4.find_all('th'):
+                if 'Syllabus:' in th.text:
+                    td_tagz = th.find_next('td').text
+                    print('this is the course description: ' + td_tagz)
+                    subject_description_renew.append(td_tagz)
+
+            subject_names.append(', '.join(subject_name_renew))
+            subject_descriptions.append(', '.join(subject_description_renew))
+            time.sleep(1.5)
+
+        try:
+            subject_or_unit_name_1.append(subject_names[0])
+            subject_or_unit_name_2.append(subject_names[1])
+            subject_or_unit_name_3.append(subject_names[2])
+            subject_or_unit_name_4.append(subject_names[3])
+            subject_or_unit_name_5.append(subject_names[4])
+            subject_or_unit_name_6.append(subject_names[5])
+            subject_or_unit_name_7.append(subject_names[6])
+            subject_or_unit_name_8.append(subject_names[7])
+            subject_or_unit_name_9.append(subject_names[8])
+            subject_or_unit_name_10.append(subject_names[9])
+
+        except:
+            pass
+
+        # adding null values
+        if len(subject_or_unit_name_2) != len(subject_or_unit_name_1):
+            subject_or_unit_name_2.append('')
+        if len(subject_or_unit_name_3) != len(subject_or_unit_name_1):
+            subject_or_unit_name_3.append('')
+        if len(subject_or_unit_name_4) != len(subject_or_unit_name_1):
+            subject_or_unit_name_4.append('')
+        if len(subject_or_unit_name_5) != len(subject_or_unit_name_1):
+            subject_or_unit_name_5.append('')
+        if len(subject_or_unit_name_6) != len(subject_or_unit_name_1):
+            subject_or_unit_name_6.append('')
+        if len(subject_or_unit_name_7) != len(subject_or_unit_name_1):
+            subject_or_unit_name_7.append('')
+        if len(subject_or_unit_name_8) != len(subject_or_unit_name_1):
+            subject_or_unit_name_8.append('')
+        if len(subject_or_unit_name_9) != len(subject_or_unit_name_1):
+            subject_or_unit_name_9.append('')
+        if len(subject_or_unit_name_10) != len(subject_or_unit_name_1):
+            subject_or_unit_name_10.append('')
+
+        try:
+            subject_or_unit_desc_1.append(subject_descriptions[0])
+            subject_or_unit_desc_2.append(subject_descriptions[1])
+            subject_or_unit_desc_3.append(subject_descriptions[2])
+            subject_or_unit_desc_4.append(subject_descriptions[3])
+            subject_or_unit_desc_5.append(subject_descriptions[4])
+            subject_or_unit_desc_6.append(subject_descriptions[5])
+            subject_or_unit_desc_7.append(subject_descriptions[6])
+            subject_or_unit_desc_8.append(subject_descriptions[7])
+            subject_or_unit_desc_9.append(subject_descriptions[8])
+            subject_or_unit_desc_10.append(subject_descriptions[9])
+        except:
+            pass
+
+        # adding null values
+        if len(subject_or_unit_desc_2) != len(subject_or_unit_desc_1):
+            subject_or_unit_desc_2.append('')
+        if len(subject_or_unit_desc_3) != len(subject_or_unit_desc_1):
+            subject_or_unit_desc_3.append('')
+        if len(subject_or_unit_desc_4) != len(subject_or_unit_desc_1):
+            subject_or_unit_desc_4.append('')
+        if len(subject_or_unit_desc_5) != len(subject_or_unit_desc_1):
+            subject_or_unit_desc_5.append('')
+        if len(subject_or_unit_desc_6) != len(subject_or_unit_desc_1):
+            subject_or_unit_desc_6.append('')
+        if len(subject_or_unit_desc_7) != len(subject_or_unit_desc_1):
+            subject_or_unit_desc_7.append('')
+        if len(subject_or_unit_desc_8) != len(subject_or_unit_desc_1):
+            subject_or_unit_desc_8.append('')
+        if len(subject_or_unit_desc_9) != len(subject_or_unit_desc_1):
+            subject_or_unit_desc_9.append('')
+        if len(subject_or_unit_desc_10) != len(subject_or_unit_desc_1):
+            subject_or_unit_desc_10.append('')
+
+
         print('Level code' + str(len(level_codes)))
         print('University' + str(len(uni_names)))
         print('City' + str(len(cities)))
@@ -359,6 +541,27 @@ with open('links.txt') as f:
         print('Remarks' + str(len(remarks)))
         print('fees of internationals' +str(int_fees))
 
+        print('subject name: ' + str(len(subject_or_unit_name_1)))
+        print('subject name: ' + str(len(subject_or_unit_name_2)))
+        print('subject name: ' + str(len(subject_or_unit_name_3)))
+        print('subject name: ' + str(len(subject_or_unit_name_4)))
+        print('subject name: ' + str(len(subject_or_unit_name_5)))
+        print('subject name: ' + str(len(subject_or_unit_name_6)))
+        print('subject name: ' + str(len(subject_or_unit_name_7)))
+        print('subject name: ' + str(len(subject_or_unit_name_8)))
+        print('subject name: ' + str(len(subject_or_unit_name_9)))
+        print('subject name: ' + str(len(subject_or_unit_name_10)))
+
+        print('subject description: ' + str(len(subject_or_unit_desc_1)))
+        print('subject description: ' + str(len(subject_or_unit_desc_2)))
+        print('subject description: ' + str(len(subject_or_unit_desc_3)))
+        print('subject description: ' + str(len(subject_or_unit_desc_4)))
+        print('subject description: ' + str(len(subject_or_unit_desc_5)))
+        print('subject description: ' + str(len(subject_or_unit_desc_6)))
+        print('subject description: ' + str(len(subject_or_unit_desc_7)))
+        print('subject description: ' + str(len(subject_or_unit_desc_8)))
+        print('subject description: ' + str(len(subject_or_unit_desc_9)))
+        print('subject description: ' + str(len(subject_or_unit_desc_10)))
 
         print('====================================================================================================================')
         # time.sleep(3)
@@ -392,7 +595,27 @@ test_df = pd.DataFrame({
     'Distance': distances,
     'Face to face': face_to_faces,
     'Blended': blendeds,
-    'Remarks': remarks
+    'Remarks': remarks,
+    'Subject or unit name 1': subject_or_unit_name_1,
+    'Subject or unit name 2': subject_or_unit_name_2,
+    'Subject or unit name 3': subject_or_unit_name_3,
+    'Subject or unit name 4': subject_or_unit_name_4,
+    'Subject or unit name 5': subject_or_unit_name_5,
+    'Subject or unit name 6': subject_or_unit_name_6,
+    'Subject or unit name 7': subject_or_unit_name_7,
+    'Subject or unit name 8': subject_or_unit_name_8,
+    'Subject or unit name 9': subject_or_unit_name_9,
+    'Subject or unit name 10': subject_or_unit_name_10,
+    'subject or unit description 1': subject_or_unit_desc_1,
+    'subject or unit description 2': subject_or_unit_desc_2,
+    'subject or unit description 3': subject_or_unit_desc_3,
+    'subject or unit description 4': subject_or_unit_desc_4,
+    'subject or unit description 5': subject_or_unit_desc_5,
+    'subject or unit description 6': subject_or_unit_desc_6,
+    'subject or unit description 7': subject_or_unit_desc_7,
+    'subject or unit description 8': subject_or_unit_desc_8,
+    'subject or unit description 9': subject_or_unit_desc_9,
+    'subject or unit description 10': subject_or_unit_desc_10
 
 })
 

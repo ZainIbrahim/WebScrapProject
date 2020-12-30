@@ -48,7 +48,7 @@ for j in range(len(links)):
 
     time.sleep(5)
 
-with open("file.txt", "w") as output:
+with open("links.txt", "w") as output:
     for row in all_links:
         output.write(str(row) + '\n')
     #output.write(str(all_links))
